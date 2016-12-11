@@ -1,6 +1,7 @@
 package thejeshgn.com.bleuartperipheral;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.ParcelUuid;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,6 +33,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import no.nordicsemi.android.log.ILogSession;
+import no.nordicsemi.android.log.LogContract;
+import no.nordicsemi.android.log.Logger;
+
 /**
  * It has everything that is needed by GattServer to respond
  * MIT Licnese
@@ -41,6 +46,8 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+    private ILogSession mLogSession;
+
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
@@ -52,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mLogSession = Logger.newSession(this, "Hello", "BleUARTPeripheral");
+
         setContentView(R.layout.activity_main);
 
         ListView list = new ListView(this);
@@ -64,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
         mBluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         mBluetoothAdapter = mBluetoothManager.getAdapter();
+        Logger.log(mLogSession, LogContract.Log.Level.DEBUG, "In on create");
 
     }
 
@@ -75,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
          */
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
             //Bluetooth is disabled
+            Logger.log(mLogSession, LogContract.Log.Level.DEBUG, "Bluetooth is disabled. Request enable");
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivity(enableBtIntent);
             finish();
@@ -98,8 +109,9 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        Logger.log(mLogSession, LogContract.Log.Level.DEBUG, "Get Advertiser");
         mBluetoothLeAdvertiser = mBluetoothAdapter.getBluetoothLeAdvertiser();
+        Logger.log(mLogSession, LogContract.Log.Level.DEBUG, "Open GattServer");
         mGattServer = mBluetoothManager.openGattServer(this, mGattServerCallback);
 
         // If everything is okay then start

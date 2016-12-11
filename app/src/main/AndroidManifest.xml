@@ -8,6 +8,7 @@
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="no.nordicsemi.android.LOG" />
 
     <application
         android:allowBackup="true"
@@ -23,5 +24,10 @@
             </intent-filter>
         </activity>
     </application>
+
+    <provider
+        android:name="thejeshgn.com.bleuartperipheral.log.LogProvider"
+        android:authorities="thejeshgn.com.bleuartperipheral"
+        android:exported="true" />
 
 </manifest>
