@@ -107,40 +107,41 @@ public class MainActivity extends AppCompatActivity {
         startAdvertising();
     }
 
-        /*
-           * Callback handles events from the framework describing
-           * if we were successful in starting the advertisement requests.
-           */
-        private AdvertiseCallback mAdvertiseCallback = new AdvertiseCallback() {
-            @Override
-            public void onStartSuccess(AdvertiseSettings settingsInEffect) {
-                Log.i(TAG, "Peripheral Advertise Started.");
-                postStatusMessage("GATT Server Ready");
-            }
-
-            @Override
-            public void onStartFailure(int errorCode) {
-                Log.w(TAG, "Peripheral Advertise Failed: "+errorCode);
-                postStatusMessage("GATT Server Error "+errorCode);
-            }
-        };
-
-        private Handler mHandler = new Handler();
-        private void postStatusMessage(final String message) {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    setTitle(message);
-                }
-            });
+    /*
+       * Callback handles events from the framework describing
+       * if we were successful in starting the advertisement requests.
+       */
+    private AdvertiseCallback mAdvertiseCallback = new AdvertiseCallback() {
+        @Override
+        public void onStartSuccess(AdvertiseSettings settingsInEffect) {
+            Log.i(TAG, "Peripheral Advertise Started.");
+            postStatusMessage("GATT Server Ready");
         }
 
-        /*
-     * Create the GATT server instance, attaching all services and
-     * characteristics that should be exposed
-     */
+        @Override
+        public void onStartFailure(int errorCode) {
+            Log.w(TAG, "Peripheral Advertise Failed: " + errorCode);
+            postStatusMessage("GATT Server Error " + errorCode);
+        }
+    };
+
+    private Handler mHandler = new Handler();
+
+    private void postStatusMessage(final String message) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                setTitle(message);
+            }
+        });
+    }
+
+    /*
+ * Create the GATT server instance, attaching all services and
+ * characteristics that should be exposed
+ */
     private void initServer() {
-        BluetoothGattService UART_SERVICE =new BluetoothGattService(UARTProfile.UART_SERVICE,
+        BluetoothGattService UART_SERVICE = new BluetoothGattService(UARTProfile.UART_SERVICE,
                 BluetoothGattService.SERVICE_TYPE_PRIMARY);
 
         BluetoothGattCharacteristic TX_READ_CHAR =
@@ -157,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         BluetoothGattCharacteristic RX_WRITE_CHAR =
                 new BluetoothGattCharacteristic(UARTProfile.RX_WRITE_CHAR,
                         //write permissions
-                        BluetoothGattCharacteristic.PROPERTY_WRITE , BluetoothGattCharacteristic.PERMISSION_WRITE);
+                        BluetoothGattCharacteristic.PROPERTY_WRITE, BluetoothGattCharacteristic.PERMISSION_WRITE);
 
 
         UART_SERVICE.addCharacteristic(TX_READ_CHAR);
@@ -195,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 //This will add the item to our list and update the adapter at the same time.
                 if (toAdd) {
-                    if (mConnectedDevicesAdapter.getPosition(device) < 0){
+                    if (mConnectedDevicesAdapter.getPosition(device) < 0) {
                         mConnectedDevicesAdapter.add(device);
                     }
 
@@ -208,16 +209,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-        /*
-     * Terminate the server and any running callbacks
-     */
-        private void shutdownServer() {
-            //mHandler.removeCallbacks(mNotifyRunnable);
+    /*
+ * Terminate the server and any running callbacks
+ */
+    private void shutdownServer() {
+        //mHandler.removeCallbacks(mNotifyRunnable);
 
-            if (mGattServer == null) return;
+        if (mGattServer == null) return;
 
-            mGattServer.close();
-        }
+        mGattServer.close();
+    }
 
 //        private Runnable mNotifyRunnable = new Runnable() {
 //            @Override
@@ -235,8 +236,8 @@ public class MainActivity extends AppCompatActivity {
         public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
             super.onConnectionStateChange(device, status, newState);
             Log.i(TAG, "onConnectionStateChange "
-                    +UARTProfile.getStatusDescription(status)+" "
-                    +UARTProfile.getStateDescription(newState));
+                    + UARTProfile.getStatusDescription(status) + " "
+                    + UARTProfile.getStateDescription(newState));
 
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 postDeviceChange(device, true);
@@ -272,7 +273,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
         @Override
         public void onCharacteristicWriteRequest(BluetoothDevice device,
                                                  int requestId,
@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
                                                  int offset,
                                                  byte[] value) {
             super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
-            Log.i(TAG, "onCharacteristicWriteRequest "+characteristic.getUuid().toString());
+            Log.i(TAG, "onCharacteristicWriteRequest " + characteristic.getUuid().toString());
 
             if (UARTProfile.RX_WRITE_CHAR.equals(characteristic.getUuid())) {
 
@@ -294,8 +294,8 @@ public class MainActivity extends AppCompatActivity {
                             BluetoothGatt.GATT_SUCCESS,
                             0,
                             value);
-                    Log.d(TAG, "Received  data on "+characteristic.getUuid().toString());
-                    Log.d(TAG, "Received data"+ bytesToHex(value));
+                    Log.d(TAG, "Received  data on " + characteristic.getUuid().toString());
+                    Log.d(TAG, "Received data" + bytesToHex(value));
 
                 }
 
@@ -310,16 +310,12 @@ public class MainActivity extends AppCompatActivity {
                 });
 
 
-
-
             }
         }
 
 
-
         @Override
-        public void onNotificationSent(BluetoothDevice device, int status)
-        {
+        public void onNotificationSent(BluetoothDevice device, int status) {
             Log.d("GattServer", "onNotificationSent");
             super.onNotificationSent(device, status);
         }
@@ -354,11 +350,6 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-
-
-
-
-
     //Send notification to all the devices once you write
     private void sendOurResponse() {
         for (BluetoothDevice device : mConnectedDevices) {
@@ -366,26 +357,26 @@ public class MainActivity extends AppCompatActivity {
                     .getCharacteristic(UARTProfile.TX_READ_CHAR);
 
             byte[] notify_msg = storage;
-            String hexStorage =  bytesToHex(storage);
-            Log.d(TAG, "received string = "+bytesToHex(storage));
+            String hexStorage = bytesToHex(storage);
+            Log.d(TAG, "received string = " + bytesToHex(storage));
 
 
-            if(hexStorage.equals("77686F616D69")){
+            if (hexStorage.equals("77686F616D69")) {
 
                 notify_msg = "I am echo an machine".getBytes();
 
-            }else if(bytesToHex(storage).equals("64617465")){
+            } else if (bytesToHex(storage).equals("64617465")) {
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                 Date date = new Date();
                 notify_msg = dateFormat.format(date).getBytes();
 
-            }else{
+            } else {
                 //TODO: Do nothing send what you received. Basically echo
             }
             readCharacteristic.setValue(notify_msg);
-            Log.d(TAG, "Sending Notifications"+notify_msg);
-           boolean is_notified =  mGattServer.notifyCharacteristicChanged(device, readCharacteristic, false);
-            Log.d(TAG, "Notifications ="+is_notified);
+            Log.d(TAG, "Sending Notifications" + notify_msg);
+            boolean is_notified = mGattServer.notifyCharacteristicChanged(device, readCharacteristic, false);
+            Log.d(TAG, "Notifications =" + is_notified);
         }
     }
 
@@ -398,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
     //for priting
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
+        for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
             hexChars[j * 2] = hexArray[v >>> 4];
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
@@ -414,7 +405,7 @@ public class MainActivity extends AppCompatActivity {
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
             data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i+1), 16));
+                    + Character.digit(s.charAt(i + 1), 16));
         }
         return data;
     }

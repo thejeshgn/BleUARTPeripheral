@@ -39,7 +39,7 @@ public class UARTProfile {
             case BluetoothProfile.STATE_DISCONNECTING:
                 return "Disconnecting";
             default:
-                return "Unknown State "+state;
+                return "Unknown State " + state;
         }
     }
 
@@ -49,7 +49,7 @@ public class UARTProfile {
             case BluetoothGatt.GATT_SUCCESS:
                 return "SUCCESS";
             default:
-                return "Unknown Status "+status;
+                return "Unknown Status " + status;
         }
     }
 
