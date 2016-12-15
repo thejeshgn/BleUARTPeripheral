@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">BleUARTPeripheral</string>
+    <string name="title_activity_about">AboutActivity</string>
+    <string name="title_activity_start">StartActivity</string>
 </resources>

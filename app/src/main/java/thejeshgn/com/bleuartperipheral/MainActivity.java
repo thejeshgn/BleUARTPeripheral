@@ -10,6 +10,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -36,6 +37,8 @@ import android.widget.Toast;
 import no.nordicsemi.android.log.ILogSession;
 import no.nordicsemi.android.log.LogContract;
 import no.nordicsemi.android.log.Logger;
+import thejeshgn.com.bleuartperipheral.data.DataManager;
+import thejeshgn.com.bleuartperipheral.data.Util;
 
 /**
  * It has everything that is needed by GattServer to respond
@@ -47,7 +50,7 @@ import no.nordicsemi.android.log.Logger;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private ILogSession mLogSession;
-
+    private DataManager dataManager = DataManager.getInstance();
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
@@ -299,7 +302,6 @@ public class MainActivity extends AppCompatActivity {
             if (UARTProfile.RX_WRITE_CHAR.equals(characteristic.getUuid())) {
 
                 //IMP: Copy the received value to storage
-                storage = value;
                 if (responseNeeded) {
                     mGattServer.sendResponse(device,
                             requestId,
@@ -311,8 +313,16 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-                //IMP: Respond
-                sendOurResponse();
+                dataManager.addPacket(value);
+                if (dataManager.isMessageComplete()){
+                    storage = dataManager.getTheCompleteMesssage();
+                    dataManager.clear();
+                    //IMP: Respond
+                    sendOurResponse();
+
+                }
+
+
 
                 mHandler.post(new Runnable() {
                     @Override
@@ -385,10 +395,15 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 //TODO: Do nothing send what you received. Basically echo
             }
-            readCharacteristic.setValue(notify_msg);
-            Log.d(TAG, "Sending Notifications" + notify_msg);
-            boolean is_notified = mGattServer.notifyCharacteristicChanged(device, readCharacteristic, false);
-            Log.d(TAG, "Notifications =" + is_notified);
+
+            List messages = Util.createPacketsToSend(notify_msg);
+            for(int i =0; i < messages.size(); i++){
+                byte[] message =(byte[]) messages.get(i);
+                readCharacteristic.setValue(message);
+                Log.d(TAG, "Sending Notifications" + message);
+                boolean is_notified = mGattServer.notifyCharacteristicChanged(device, readCharacteristic, false);
+                Log.d(TAG, "Notifications =" + is_notified);
+            }
         }
     }
 
