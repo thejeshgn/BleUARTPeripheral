@@ -10,6 +10,15 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="no.nordicsemi.android.LOG" />
 
+    <provider
+        android:name=".log.LogProvider"
+        android:authorities="thejeshgn.com.bleuartperipheral"
+        android:exported="true" />
+
+    <android:uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -23,11 +32,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_about"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
-
-    <provider
-        android:name="thejeshgn.com.bleuartperipheral.log.LogProvider"
-        android:authorities="thejeshgn.com.bleuartperipheral"
-        android:exported="true" />
 
 </manifest>

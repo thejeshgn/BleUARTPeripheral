@@ -31,6 +31,7 @@ import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -86,6 +87,33 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_tool_bar, menu);
         return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Toast.makeText(this, "Inside menu item.", Toast.LENGTH_SHORT).show();
+        Logger.log(mLogSession, LogContract.Log.Level.INFO, "Inside onOptionsItemSelected");
+        switch (item.getItemId()) {
+            case R.id.action_about:
+                Intent myIntent = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(myIntent);
+                return true;
+
+            case R.id.action_log:
+                return true;
+
+            case R.id.action_start_stop:
+                // User chose the "Favorite" action, mark the current item
+                // as a favorite...
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     protected void onResume() {
